@@ -4,7 +4,8 @@ const cors = require('cors')
 const admin = require("firebase-admin");
 require('dotenv').config()
 const { MongoClient } = require('mongodb');
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 5000;
+const ObjectId = require('mongodb').ObjectId;
 
 
 
@@ -53,6 +54,12 @@ async function run() {
             const cursor = appointmentsCollection.find(query);
             const appointments = await cursor.toArray();
             res.json(appointments);
+        })
+        app.get('/appointments/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await appointmentsCollection.findOne(query);
+            res.json(result);
         })
 
         app.post('/appointments', async (req, res) => {
@@ -109,6 +116,7 @@ async function run() {
 
 
         })
+
 
     } finally {
         //   await client.close();
